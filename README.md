@@ -13,15 +13,28 @@ The primary R function of interest is `fRegress_concurrent()`, which comes from 
 
 **An Example**:
 ```
-# Load the Ojo et al. (2021) library for easy data generation
-library(fdaoutlier)
+# Install ffscbExtra
+devtools::install_github("creutzml/ffscbExtra")
+library(ffscbExtra)
 
-# Create an example data set
-test_data_obj <- simulation_model7()
-test_data <- test_data_obj$data
+# Load Pittman data generation functions
+functions_path <- file.path(here::here(), "R Code")
+source(file.path(functions_path, "pittman_data_gen_nonsmooth.R"))
 
-# Implement POD
-pod_test <- pod_fda(test_data, cutoff = "classical1.5")
+# Generate new functional data using Pittman's approach:
+newData <- generate_data_temp(
+  N = 50, 
+  length = 1000, 
+  lambda = 1.5,
+  n_inf = 1
+)
+
+## And now, if we fit with concurrent regression and our bands
+fReg_list <- ffscbExtra::fRegress_concurrent(y_mat = newData$Ydata,
+                                             x_array = newData$Xdata)
+
+## Plot the dffits
+matplot(fReg_list$dffits, type = "l")
 ```
 
 The remaining scripts in the folder allow one to recreate the simulation results and case study results found in the manuscript. Specifically, a description of each script is given below:
