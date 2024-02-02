@@ -25,28 +25,18 @@ library(ffscb)
 library(conformalInference.fd)
 library(progress)
 
-# Main directory:
-main_dir <- file.path("/Users/creutzml/Library/Mobile Documents",
-                      "/com~apple~CloudDocs/Documents/Dissertation",
-                      "/functional_data_analysis/code")
-source(file.path(main_dir, 
-                 "fast_and_fair/make_regression_band_mc.R"))
-source(file.path(main_dir, 
-                 "fast_and_fair/make_band_mc.R"))
-source(file.path(main_dir, 
-                 "fast_and_fair/confidence_band_mc.R"))
-source(file.path(main_dir, 
-                 "fast_and_fair",
-                 "make_concurrent_regression_band_mc_10_12_23.R"))
-source(file.path(main_dir, 
-                 "functional_dffits/fRegress_concurrent.R"))
-source(file.path(main_dir, 
-                 "functional_dffits/pittman_data_gen.R"))
+# Install ffscbExtra
+devtools::install_github("creutzml/ffscbExtra")
+library(ffscbExtra)
 
-load(paste0("/Users/creutzml/Library/Mobile Documents/com~",
-            "apple~CloudDocs/Documents/Dissertation/",
-            "functional_data_analysis/sim_results/",
-            "functional_dffits/mvt_cutoffs_sim_1_19_23.RData"))
+# Directories
+functions_path <- file.path(here::here(), "R Code")
+data_path <- file.path(here::here(), "Data")
+
+# Source helpers
+source(file.path(functions_path, "pittman_data_gen.R"))
+
+load(file.path(data_path, "mvt_cutoffs_sim.RData"))
 #####################################################################
 
 
@@ -71,35 +61,32 @@ alphas <- c(0.10, 0.05, 0.025, 0.005)
 sim_parms <- expand.grid(n, lambda, n_infs)
 colnames(sim_parms) <- c("n", "lambda", "n_inf")
 
+
+### How to calculate the multivariate Student's t quantile
 # Calculate the cutoffs ahead of time (no need to compute them 1000
 # times for each simulation, when it's the same for each iteration)
 # t quantiles
-mvt_cutoffs <- expand.grid(n, n_sps, alphas) %>%
-  as.data.frame() %>%
-  dplyr::rename("n_obs" = Var1, 
-                "n_sp" = Var2, 
-                "alphas" = Var3) %>%
-  dplyr::mutate(t_cuts = 0)
+# mvt_cutoffs <- expand.grid(n, n_sps, alphas) %>%
+#   as.data.frame() %>%
+#   dplyr::rename("n_obs" = Var1, 
+#                 "n_sp" = Var2, 
+#                 "alphas" = Var3) %>%
+#   dplyr::mutate(t_cuts = 0)
+# 
+# for (i in 1:nrow(mvt_cutoffs)) {
+#   a_val <- mvt_cutoffs$alphas[i]
+#   t_df <- mvt_cutoffs$n_obs[i] - 3
+#   scalar <- sqrt(2/(mvt_cutoffs$n_obs[i] - 2))
+#   n_sp <- mvt_cutoffs$n_sp[i]
+#   t_quants <- qmvt(p = 1 - a_val,
+#                    df = t_df,
+#                    tail = "lower.tail",
+#                    sigma = diag(t_df/(t_df - 2),
+#                                 nrow = n_sp))
+#   cuts <- scalar*t_quants$quantile
+#   mvt_cutoffs$t_cuts[i] <- cuts
+# }
 
-for (i in 1:nrow(mvt_cutoffs)) {
-  a_val <- mvt_cutoffs$alphas[i]
-  t_df <- mvt_cutoffs$n_obs[i] - 3
-  scalar <- sqrt(2/(mvt_cutoffs$n_obs[i] - 2))
-  n_sp <- mvt_cutoffs$n_sp[i]
-  t_quants <- qmvt(p = 1 - a_val,
-                   df = t_df,
-                   tail = "lower.tail",
-                   sigma = diag(t_df/(t_df - 2),
-                                nrow = n_sp))
-  cuts <- scalar*t_quants$quantile
-  mvt_cutoffs$t_cuts[i] <- cuts
-}
-
-save(mvt_cutoffs,
-     file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/mvt_cutoffs_sim_1_19_23.RData"))
 
 
 # Empty list to store simulation results
@@ -260,16 +247,3 @@ for (p in 1:nrow(sim_parms)) {
 
 # # Create and save data frame from list
 sim_results_df <- do.call(rbind, sim_results_list)
-# sim_results_df2 <- do.call(rbind, sim_results_list[51:100])
-save(sim_results_df,
-     file = paste0("/Users/creutzml/Library/Mobile Documents",
-                   "/com~apple~CloudDocs/Documents/Dissertation",
-                   "/functional_data_analysis/sim_results",
-                   "/functional_dffits/dffits_mvt_mod3_12_19_23.RData"))
-# 
-# rm(sim_results_list)
-# sim_results_df_final <- rbind(sim_results_df, sim_results_df2)
-# rm(sim_results_df2)
-
-# sim_results_sum_final <- bind_rows(sim_results_df_sum, sim_results_df_sum2)
-# rm(sim_results_df_sum2)
