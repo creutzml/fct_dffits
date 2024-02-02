@@ -18,23 +18,16 @@ library(ffscb)
 library(conformalInference.fd)
 library(progress)
 
-# Main directory:
-main_dir <- file.path("/Users/creutzml/Library/Mobile Documents",
-                      "/com~apple~CloudDocs/Documents/Dissertation",
-                      "/functional_data_analysis/code")
-source(file.path(main_dir, 
-                 "fast_and_fair/make_regression_band_mc.R"))
-source(file.path(main_dir, 
-                 "fast_and_fair/make_band_mc.R"))
-source(file.path(main_dir, 
-                 "fast_and_fair/confidence_band_mc.R"))
-source(file.path(main_dir, 
-                 "fast_and_fair",
-                 "make_concurrent_regression_band_mc_10_12_23.R"))
-source(file.path(main_dir, 
-                 "functional_dffits/fRegress_concurrent.R"))
-source(file.path(main_dir, 
-                 "functional_dffits/pittman_data_gen.R"))
+# Install ffscbExtra
+devtools::install_github("creutzml/ffscbExtra")
+library(ffscbExtra)
+
+# Directories
+functions_path <- file.path(here::here(), "R Code")
+data_path <- file.path(here::here(), "Data")
+
+# Source helpers
+source(file.path(functions_path, "pittman_data_gen.R"))
 #####################################################################
 
 
@@ -190,9 +183,5 @@ for (p in 1:nrow(sim_parms)) {
 
 # Create and save data frame from list
 sim_results_df <- do.call(rbind, sim_results_list)
-save(sim_results_df, 
-     file = paste0("/Users/creutzml/Library/Mobile Documents",
-                   "/com~apple~CloudDocs/Documents/Dissertation",
-                   "/functional_data_analysis/sim_results",
-                   "/functional_dffits/dffits_exp_mc_11_14_23.RData"))
+
 
