@@ -6,6 +6,8 @@
 ### (Results of previous simulation)                              ###
 ###   Using Ryan Pittman's data generation methods to simulate    ###
 ### and investigate functional DFFITS.                            ###
+### This script was used to create Figures C.1 to C.9 in Appendix ###
+### C, Creutzinger (2024).                                        ###
 #####################################################################
 
 
