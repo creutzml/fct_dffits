@@ -1,18 +1,15 @@
-#This is the Code for |DFBETAS0| Simulation and does 1 iteration
+## Manually altering Pittman's (2022) code to run the same bootstrap
+## algorithm, without any smoothing or regularization
 
-# For running on own computer
-# # Main directory:
-# main_dir <- file.path("/Users/creutzml/Library/Mobile Documents",
-#                       "/com~apple~CloudDocs/Documents/Dissertation",
-#                       "/functional_data_analysis/code")
-# 
-# # Source the original functions these build on
-# source(file.path(main_dir, 
-#                  "functional_dffits/pittman_data_gen.R"))
+## Get directory
+functions_path <- file.path(here::here(), "R Code")
 
-# Running as a bash script
-source(paste0("/scratch/alpine/creutzml@colostate.edu/dffits/code",
-              "/pittman_data_gen.R"))
+# Source main file for this one
+source(file = file.path(functions_path, "pittman_data_gen.R"))
+
+# Install ffscbExtra
+devtools::install_github("creutzml/ffscbExtra")
+library(ffscbExtra)
 
 ##Can manually change things like BasisNum, the B0fun, B1fun, 
 ##B1funout, functions, and length
@@ -23,8 +20,8 @@ library(corpcor)
 ##Calculates dffits for each t and each observation
 BestDFFITS_fun_ns<-function(Xtmat,Ytmat){
   # Fit concurrent model without smoothing
-  fReg_list <- fRegress_concurrent(y_mat = newData$Ydata,
-                                   x_array = newData$Xdata)
+  fReg_list <- ffscbExtra::fRegress_concurrent(y_mat = newData$Ydata,
+                                               x_array = newData$Xdata)
   
   # Return the dffits
   return(list(dffits = fReg_list$dffits_mat))

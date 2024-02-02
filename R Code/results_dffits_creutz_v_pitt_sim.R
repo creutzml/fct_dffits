@@ -11,110 +11,67 @@
 
 ## Starting steps
 #####################################################################
-# # Packages
-# library(mvtnorm)
-# library(tidyverse)
-# library(fda)
-# library(ffscb)
-# # library(progress)
-# library(R.utils)
-# options(dplyr.summarise.inform = FALSE)
-# library(ggrepel)
-# 
-# # Directory for files
-# sim_results_folder <- paste0("/Users/creutzml/Documents/Dissertatio",
-#                              "n/sim_results/functional_dffits/",
-#                              "T_100_pitt_0.5")
-# 
-# # List of files to read
-# sim_results_files <- list.files(path = sim_results_folder,
-#                                 pattern = "*.RData",
-#                                 full.names = T)
-# 
-# # Load one in, then start a loop
-# load(sim_results_files[1])
-# sim_results <- sim_results_temp2
-# rm(sim_results_temp2)
-# for (f in 2:length(sim_results_files)) {
-#   load(sim_results_files[f])
-#   sim_results <- bind_rows(sim_results, sim_results_temp2)
-#   rm(sim_results_temp2)
-# }
-# 
-# # Quick count of the iterations completed for each sim
-# # sim_results_sim_count <- sim_results %>%
-# #   dplyr::group_by(sim_mod, method, n, lambda,
-# #                   n_inf, alpha_val) %>%
-# #   dplyr::summarise(n_sims = n())
-# 
-# save(sim_results,
-#      file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-#                    "apple~CloudDocs/Documents/Dissertation/",
-#                    "functional_data_analysis/sim_results/",
-#                    "functional_dffits/dffits_creutz_v_pitt_sim",
-#                    "_a_0.5_T_100.RData"))
+# Packages
+library(mvtnorm)
+library(tidyverse)
+library(fda)
+library(ffscb)
+# library(progress)
+library(R.utils)
+options(dplyr.summarise.inform = FALSE)
+library(ggrepel)
+
+# Install ffscbExtra package
+devtools::install_github("creutzml/ffscbExtra")
+library(ffcbExtra)
+
+# Directories
+functions_path <- file.path(here::here(), "R Code")
+data_path <- file.path(here::here(), "Data")
 
 # Load in the simulation data
-load(file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/creutz_v_pitt/dffits_creutz_v",
-                   "_pitt_sim_a_0.RData"))
+load(file = file.path(data_path, 
+                      "dffits_creutz_v_pitt_sim_a_0.RData"))
 
 # Rename, so that all three can be loaded in
 sim_results_a_0_T1000 <- sim_results %>%
   dplyr::mutate(alpha_b = 0, n_sp = 1000)
 
 # Load in the simulation data
-load(file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/creutz_v_pitt/dffits_creutz_v",
-                   "_pitt_sim_a_0.25.RData"))
+load(file = file.path(data_path, 
+                      "dffits_creutz_v_pitt_sim_a_0.25.RData"))
 
 # Rename, so that all three can be loaded in
 sim_results_a_0.25_T1000 <- sim_results %>%
   dplyr::mutate(alpha_b = 0.25, n_sp = 1000)
 
 # Load in the simulation data
-load(file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/creutz_v_pitt/dffits_creutz_v",
-                   "_pitt_sim_a_0.5.RData"))
+load(file = file.path(data_path, 
+                      "dffits_creutz_v_pitt_sim_a_0.5.RData"))
 
 # Rename, so that all three can be loaded in
 sim_results_a_0.5_T1000 <- sim_results %>%
   dplyr::mutate(alpha_b = 0.5, n_sp = 1000)
 
 # Load in the simulation data
-load(file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/creutz_v_pitt/dffits_creutz_v",
-                   "_pitt_sim_a_0_T_100.RData"))
+load(file = file.path(data_path, 
+                      "dffits_creutz_v_pitt_sim_a_0_T_100.RData"))
 
 # Rename, so that all three can be loaded in
 sim_results_a_0_T100 <- sim_results %>%
   dplyr::mutate(alpha_b = 0, n_sp = 100)
 
 # Load in the simulation data
-load(file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/creutz_v_pitt/dffits_creutz_v",
-                   "_pitt_sim_a_0.25_T_100.RData"))
+load(file = file.path(data_path, 
+                      "dffits_creutz_v_pitt_sim_a_0.25_T_100.RData"))
 
 # Rename, so that all three can be loaded in
 sim_results_a_0.25_T100 <- sim_results %>%
   dplyr::mutate(alpha_b = 0.25, n_sp = 100)
 
 # Load in the simulation data
-load(file = paste0("/Users/creutzml/Library/Mobile Documents/com~",
-                   "apple~CloudDocs/Documents/Dissertation/",
-                   "functional_data_analysis/sim_results/",
-                   "functional_dffits/creutz_v_pitt/dffits_creutz_v",
-                   "_pitt_sim_a_0.5_T_100.RData"))
+load(file = file.path(data_path, 
+                      "dffits_creutz_v_pitt_sim_a_0.5_T_100.RData"))
 
 # Rename, so that all three can be loaded in
 sim_results_a_0.5_T100 <- sim_results %>%
@@ -166,6 +123,8 @@ sim_results_sum_tot <- sim_results_all %>%
                    sd_precision = sd(precision, na.rm = T),
                    na_precision = sum(is.na(precision)))
 
+
+## Table C.2 in Appendix C, Creutzinger (2024)
 # Make a publishable form of the Pittman specific results
 sim_results_summary_all_pretty <- sim_results_sum_tot %>%
   dplyr::mutate(alpha_val = factor(alpha_val), 
@@ -210,6 +169,7 @@ kableExtra::kbl(sim_results_summary_all_pretty,
 ## Creutzinger perform the best for each methodologies in the sim
 ## Next steps focus in on those results for the main body of the pape
 
+## Table 4.1 in Chapter 4, Creutzinger (2024)
 # Filter out the lesser results from the total table:
 sim_results_sum_tot_main <- sim_results_sum_tot %>%
   dplyr::filter(method %in% c("Creutz", "Pittman_Smooth"), 
@@ -288,6 +248,8 @@ sim_results_sum <- sim_results_all %>%
 
 
 
+### Figures 4.3 in Chapter 4, C.10 and C.12 in Appendix C, 
+### Creutzinger (2024)
 ### Summary Figures over the sample size on the x axis
 #####################################################################
 sim_results_sum_n <- sim_results_all %>%
@@ -456,7 +418,8 @@ sim_results_sum_n %>%
 
 
 
-
+### Figures 4.4 in Chapter 4, C.11 and C.13 in Appendix C, 
+### Creutzinger (2024)
 ### Looking more specifically at the results over the number of 
 ### sampling points in the domain
 #####################################################################

@@ -11,31 +11,35 @@
 
 ## Starting steps
 #####################################################################
+# Install ffscbExtra
+devtools::install_github("creutzml/ffscbExtra")
+library(ffscbExtra)
+
 # Packages
 library(mvtnorm)
 library(tidyverse)
 library(fda)
-library(ffscb)
+# library(ffscb)
 # library(progress)
 library(R.utils)
 options(dplyr.summarise.inform = FALSE)
 
 
-# Read in command arguments from bash files
-args <- commandArgs(trailingOnly=TRUE )
-if (length(args) != 6) {
-  stop("Looping parameters failed to initialize in 'commandArgs'.")
-}
-
-# Make new objects from input
-sim_mod <- as.character(args[1])
-n_obs <- as.numeric(args[2])
-lambdas <- as.numeric(args[3])
-n_infs <- as.numeric(args[4])
-iter <- as.numeric(args[5])
+# # Read in command arguments from bash files
+# args <- commandArgs(trailingOnly=TRUE )
+# if (length(args) != 6) {
+#   stop("Looping parameters failed to initialize in 'commandArgs'.")
+# }
+# 
+# # Make new objects from input
+# sim_mod <- as.character(args[1])
+# n_obs <- as.numeric(args[2])
+# lambdas <- as.numeric(args[3])
+# n_infs <- as.numeric(args[4])
+# iter <- as.numeric(args[5])
 
 # Test case
-# {sim_mod = "1"; n_obs = 10; lambdas = 1; n_infs = 1; iter = 2}
+{sim_mod = "1"; n_obs = 10; lambdas = 1; n_infs = 1; iter = 2}
 
 # Trying to run 8 iterations in one, so that all can be submitted at
 # the same time on SLURM alpine
@@ -54,29 +58,15 @@ file_name <- paste0(
 base::cat(file_name, "\n")
 
 # Directories
-scratch_path <- "/scratch/alpine/creutzml@colostate.edu"
-dffits_code_path <- file.path(scratch_path, "dffits/code")
-dffits_results_path <- file.path(scratch_path, "dffits/sim_results")
+functions_path <- file.path(here::here(), "R Code")
+data_path <- file.path(here::here(), "Data")
 #####################################################################
 
-
-# Main directory:
-source(file.path(dffits_code_path, 
-                 "make_regression_band_mc.R"))
-source(file.path(dffits_code_path, 
-                 "make_band_mc.R"))
-source(file.path(dffits_code_path, 
-                 "confidence_band_mc.R"))
-source(file.path(dffits_code_path, 
-                 "make_concurrent_regression_band_mc_10_12_23.R"))
-source(file.path(dffits_code_path, 
-                 "fRegress_concurrent.R"))
-source(file.path(dffits_code_path, 
-                 "pittman_data_gen_nonsmooth.R"))
+# Load in Pittman's functions
+source(file.path(functions_path, "pittman_data_gen_nonsmooth.R"))
 
 # Load in the multivariate cutoffs
-load(file.path(dffits_code_path, 
-               "mvt_cutoffs_sim_1_19_23.RData"))
+load(file.path(data_path, "mvt_cutoffs_sim.RData"))
 #####################################################################
 
 
@@ -144,8 +134,8 @@ for (loop_iter in 1:8) {
   creutz_s_time <- Sys.time()
   
   ## And now, if we fit with concurrent regression and our bands
-  fReg_list <- fRegress_concurrent(y_mat = newData$Ydata,
-                                   x_array = newData$Xdata)
+  fReg_list <- ffscbExtra::fRegress_concurrent(y_mat = newData$Ydata,
+                                               x_array = newData$Xdata)
   
   ## Pointwise cutoff:
   # Df and mean scalar quantity
@@ -365,8 +355,9 @@ sim_results_temp2 <- sim_results_temp %>%
            (sqrt((n_tp + n_fp)*(n_tp + n_fn)*
                    (n_tn + n_fp)*(n_tn + n_fn))))
 
-save(sim_results_temp2, 
-     file = file.path(dffits_results_path, file_name))
+# If you would like to save the new simulation:
+# save(sim_results_temp2, 
+#      file = file.path(data_path, file_name))
 ###################################################################
 
 

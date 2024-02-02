@@ -370,7 +370,7 @@ absdffit_bootsamedata<-function(alpha,
                              BasisNum = 15) 
   mean_abs_dffits<-apply(abs(raw_dffits$altdffits),2,mean)
   adjusted_obs_absdffits<-mean_abs_dffits[outlier]
-  theta<-as.vector((1/mean_abs_dffits)^0/
+  theta<-as.vector((1/mean_abs_dffits)^0/ # this is alpha_b
                      sum((1/mean_abs_dffits)^0))
   #Need to set up the bootstrap next SEE OrdinaryRegressionDistribution 
   # for Details
@@ -506,7 +506,10 @@ absdffit_bootsamedata<-function(alpha,
 
 
 
+
+### Figure 4.2 in Chapter 4, Creutzinger (2024)
 ### Create an example plot of the three models
+#####################################################################
 newData1 <- GenerateFunctionalDataOut1(lambda = 2, N = 30)
 newData2 <- GenerateFunctionalDataOut2(lambda = 2, N = 30)
 newData3 <- GenerateFunctionalDataOut3(lambda = 2, N = 30)
