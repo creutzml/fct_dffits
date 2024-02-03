@@ -41,7 +41,7 @@ source(file.path(functions_path, "pittman_data_gen_nonsmooth.R"))
 
 ### Investigate the results
 #####################################################################
-load(file.path(data_path, "dffits_exp_mod1_df_11_23_23.RData"))
+load(file.path(data_path, "dffits_exp_mod1_sum_11_23_23.RData"))
 
 # sim_results_df2 %<>%
 #   dplyr::mutate(
@@ -89,19 +89,21 @@ sim_results_df_sum <- sim_results_df %>%
 # Colorblind palette for plotting
 cb_pallette <- c("#E69F00", "#0072B2", "black", "#006b4e")
 
+## Creates Figures in the Appendix for Pointwise results
 # Take a look at some plots:
 sim_results_df_sum %>%
   mutate(n = factor(n), 
-         n_inf = factor(n_inf)) %>% 
+         n_inf = factor(n_inf), #) %>% 
          # lambda = lambda + 1,
-         #alpha_val = factor(alpha_val)) %>%
-  filter(sp != 0, alpha_val == 0.1) %>%
+         alpha_val = factor(alpha_val)) %>%
+  filter(sp != 0, 
+         lambda != 1, n == 50) %>%
   rename("# Influential" = "n_inf", 
          "lam" = "lambda") %>%
 ggplot() +
   # geom_point(aes(x = sp, y = avg_accuracy, 
   #                color = alpha_val)) +
-  geom_line(aes(x = sp, y = avg_mcc, color = n)) +
+  geom_line(aes(x = sp, y = avg_mcc, color = alpha_val)) +
   # geom_errorbar(aes(x = sp, 
   #                   ymin = avg_accuracy - 2*sd_accuracy/sqrt(n), 
   #                   ymax = avg_accuracy + 2*sd_accuracy/sqrt(n),
@@ -119,11 +121,13 @@ ggplot() +
   labs(x = "Sampling Point (t)", 
        y = "Avg. Matthew's Correlation Coefficient (MCC)", 
        color = expression(alpha*" Quantile")) +
-  theme_bw() +
-  theme(text = element_text(size = 16), 
+  theme_bw(base_size = 16) +
+  theme(#text = element_text(size = 16), 
         plot.margin = unit(c(.5, 1, 1, 1), "cm"),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())
+        panel.grid.minor = element_blank(), 
+        legend.position = "bottom", 
+        strip.text = element_text(size = 16))
 
 
 #####################################################################

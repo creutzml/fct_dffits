@@ -513,198 +513,198 @@ absdffit_bootsamedata<-function(alpha,
 ### Figure 4.2 in Chapter 4, Creutzinger (2024)
 ### Create an example plot of the three models
 #####################################################################
-newData1 <- GenerateFunctionalDataOut1(lambda = 2, N = 30)
-newData2 <- GenerateFunctionalDataOut2(lambda = 2, N = 30)
-newData3 <- GenerateFunctionalDataOut3(lambda = 2, N = 30)
-# par(mfrow = c(1,3))
-# with(test_data1, {
-#   matplot(Ydata[,-OutlierNumber], type = "l", col = "gray",
-#           main = "Model 1", xlab = "Sampling Point (t)",
-#           ylab = "Y(t)")
-#   matlines(Ydata[,OutlierNumber], col = "red")
-# })
-# with(test_data2, {
-#   matplot(Ydata[,-OutlierNumber], type = "l", col = "gray",
-#           main = "Model 2", xlab = "Sampling Point (t)",
-#           ylab = "Y(t)")
-#   matlines(Ydata[,OutlierNumber], col = "red")
-# })
-# with(test_data3, {
-#   matplot(Ydata[,-OutlierNumber], type = "l", col = "gray",
-#           main = "Model 3", xlab = "Sampling Point (t)",
-#           ylab = "Y(t)")
-#   matlines(Ydata[,OutlierNumber], col = "red")
-# })
+# newData1 <- GenerateFunctionalDataOut1(lambda = 2, N = 30)
+# newData2 <- GenerateFunctionalDataOut2(lambda = 2, N = 30)
+# newData3 <- GenerateFunctionalDataOut3(lambda = 2, N = 30)
+# # par(mfrow = c(1,3))
+# # with(test_data1, {
+# #   matplot(Ydata[,-OutlierNumber], type = "l", col = "gray",
+# #           main = "Model 1", xlab = "Sampling Point (t)",
+# #           ylab = "Y(t)")
+# #   matlines(Ydata[,OutlierNumber], col = "red")
+# # })
+# # with(test_data2, {
+# #   matplot(Ydata[,-OutlierNumber], type = "l", col = "gray",
+# #           main = "Model 2", xlab = "Sampling Point (t)",
+# #           ylab = "Y(t)")
+# #   matlines(Ydata[,OutlierNumber], col = "red")
+# # })
+# # with(test_data3, {
+# #   matplot(Ydata[,-OutlierNumber], type = "l", col = "gray",
+# #           main = "Model 3", xlab = "Sampling Point (t)",
+# #           ylab = "Y(t)")
+# #   matlines(Ydata[,OutlierNumber], col = "red")
+# # })
+# # 
+# # matplot(test_data1$Xdata, type = "l")
 # 
-# matplot(test_data1$Xdata, type = "l")
-
-# Plot of the three models with influential marked as well
-y_gg_plot_data1 <- newData1$Ydata %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "Y(t)") %>%
-  dplyr::mutate(
-    inf_ob = ifelse(
-      as.numeric(substring(Observation, 2))==newData1$OutlierNumber,
-      "Influential",
-      "Not"),
-    Model = 1)
-
-y_gg_plot_data2 <- newData2$Ydata %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "Y(t)") %>%
-  dplyr::mutate(
-    inf_ob = ifelse(
-      as.numeric(substring(Observation, 2))==newData2$OutlierNumber,
-      "Influential",
-      "Not"),
-    Model = 2)
-
-y_gg_plot_data3 <- newData3$Ydata %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "Y(t)") %>%
-  dplyr::mutate(
-    inf_ob = ifelse(
-      as.numeric(substring(Observation, 2))==newData3$OutlierNumber,
-      "Influential",
-      "Not"),
-    Model = 3)
-
-y_gg_plot_data <- y_gg_plot_data1 %>%
-  dplyr::bind_rows(y_gg_plot_data2) %>%
-  dplyr::bind_rows(y_gg_plot_data3) %>%
-  dplyr::mutate(inf_ob = factor(inf_ob,
-                                levels = c("Not", "Influential")))
-
-# Plot
-y_data_plot <- ggplot() +
-  geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
-            color = "lightgray", alpha = 0.5,
-            data = y_gg_plot_data) +
-  geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
-            color = "#E69F00", size = 1.1,
-            linetype = "longdash",
-            data = y_gg_plot_data %>%
-              filter(inf_ob == "Influential")) +
-  facet_grid(cols = vars(Model),
-             labeller = label_bquote(cols = "Model "*.(Model))) +
-  scale_x_continuous(expand = c(0,0)) +
-  theme_bw() +
-  theme(text = element_text(size = 16),
-        plot.margin = unit(c(.5, 1, 1, 1), "cm"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  coord_cartesian(ylim = c(-25, 200)) +
-  labs(x = "Sampling Point (t)")
-
-
-## Next, plot the dffits from those same models
-fReg_dffits1 <- ffscbExtra::fRegress_concurrent(
-  y_mat = newData1$Ydata, 
-  x_array = newData1$Xdata
-)$dffits_mat
-
-dffits_gg_plot_data1 <- fReg_dffits1 %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "Y(t)") %>%
-  dplyr::mutate(
-    inf_ob = ifelse(
-      as.numeric(substring(Observation, 2))==newData1$OutlierNumber,
-      "Influential",
-      "Not"),
-    Model = 1)
-
-fReg_dffits2 <- ffscbExtra::fRegress_concurrent(
-  y_mat = newData2$Ydata, 
-  x_array = newData2$Xdata
-)$dffits_mat
-dffits_gg_plot_data2 <- fReg_dffits2 %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "Y(t)") %>%
-  dplyr::mutate(
-    inf_ob = ifelse(
-      as.numeric(substring(Observation, 2))==newData2$OutlierNumber,
-      "Influential",
-      "Not"),
-    Model = 2)
-
-fReg_dffits3 <- ffscbExtra::fRegress_concurrent(
-  y_mat = newData3$Ydata, 
-  x_array = newData3$Xdata
-)$dffits_mat
-
-dffits_gg_plot_data3 <- fReg_dffits3 %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "Y(t)") %>%
-  dplyr::mutate(
-    inf_ob = ifelse(
-      as.numeric(substring(Observation, 2))==newData3$OutlierNumber,
-      "Influential",
-      "Not"),
-    Model = 3)
-
-dffits_gg_plot_data <- dffits_gg_plot_data1 %>%
-  dplyr::bind_rows(dffits_gg_plot_data2) %>%
-  dplyr::bind_rows(dffits_gg_plot_data3) %>%
-  dplyr::mutate(inf_ob = factor(inf_ob,
-                                levels = c("Not", "Influential")))
-
-# Plot
-dffits_data_plot <- ggplot() +
-  geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
-            color = "lightgray", alpha = 0.5,
-            data = dffits_gg_plot_data) +
-  geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
-            color = "#E69F00", size = 1.1,
-            linetype = "longdash",
-            data = dffits_gg_plot_data %>%
-              filter(inf_ob == "Influential")) +
-  facet_grid(cols = vars(Model),
-             labeller = label_bquote(cols = "Model "*.(Model))) +
-  scale_x_continuous(expand = c(0,0)) +
-  theme_bw() +
-  theme(text = element_text(size = 16),
-        plot.margin = unit(c(.5, 1, 1, 1), "cm"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  labs(x = "Sampling Point (t)", 
-       y = "DFFITS(t)")
-
-library(cowplot)
-plot_grid(y_data_plot, dffits_data_plot,
-          align = "v", nrow = 2, labels = c("(a)", "(b)"))
-
-# Plot of X(t) sample
-x_gg_plot_data <- newData1$Xdata %>%
-  as.data.frame() %>%
-  dplyr::mutate(sp = 1:1000) %>%
-  tidyr::pivot_longer(-sp,
-                      names_to = "Observation",
-                      values_to = "X(t)")
-
-ggplot(data = x_gg_plot_data) +
-  geom_line(aes(x = sp, y = `X(t)`, group = Observation)) +
-  scale_x_continuous(expand = c(0,0)) +
-  theme_bw() +
-  theme(text = element_text(size = 16),
-        plot.margin = unit(c(.5, 1, 1, 1), "cm"),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()) +
-  labs(x = "Sampling Point (t)")
+# # Plot of the three models with influential marked as well
+# y_gg_plot_data1 <- newData1$Ydata %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "Y(t)") %>%
+#   dplyr::mutate(
+#     inf_ob = ifelse(
+#       as.numeric(substring(Observation, 2))==newData1$OutlierNumber,
+#       "Influential",
+#       "Not"),
+#     Model = 1)
+# 
+# y_gg_plot_data2 <- newData2$Ydata %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "Y(t)") %>%
+#   dplyr::mutate(
+#     inf_ob = ifelse(
+#       as.numeric(substring(Observation, 2))==newData2$OutlierNumber,
+#       "Influential",
+#       "Not"),
+#     Model = 2)
+# 
+# y_gg_plot_data3 <- newData3$Ydata %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "Y(t)") %>%
+#   dplyr::mutate(
+#     inf_ob = ifelse(
+#       as.numeric(substring(Observation, 2))==newData3$OutlierNumber,
+#       "Influential",
+#       "Not"),
+#     Model = 3)
+# 
+# y_gg_plot_data <- y_gg_plot_data1 %>%
+#   dplyr::bind_rows(y_gg_plot_data2) %>%
+#   dplyr::bind_rows(y_gg_plot_data3) %>%
+#   dplyr::mutate(inf_ob = factor(inf_ob,
+#                                 levels = c("Not", "Influential")))
+# 
+# # Plot
+# y_data_plot <- ggplot() +
+#   geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
+#             color = "lightgray", alpha = 0.5,
+#             data = y_gg_plot_data) +
+#   geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
+#             color = "#E69F00", size = 1.1,
+#             linetype = "longdash",
+#             data = y_gg_plot_data %>%
+#               filter(inf_ob == "Influential")) +
+#   facet_grid(cols = vars(Model),
+#              labeller = label_bquote(cols = "Model "*.(Model))) +
+#   scale_x_continuous(expand = c(0,0)) +
+#   theme_bw() +
+#   theme(text = element_text(size = 16),
+#         plot.margin = unit(c(.5, 1, 1, 1), "cm"),
+#         panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank()) +
+#   coord_cartesian(ylim = c(-25, 200)) +
+#   labs(x = "Sampling Point (t)")
+# 
+# 
+# ## Next, plot the dffits from those same models
+# fReg_dffits1 <- ffscbExtra::fRegress_concurrent(
+#   y_mat = newData1$Ydata, 
+#   x_array = newData1$Xdata
+# )$dffits_mat
+# 
+# dffits_gg_plot_data1 <- fReg_dffits1 %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "Y(t)") %>%
+#   dplyr::mutate(
+#     inf_ob = ifelse(
+#       as.numeric(substring(Observation, 2))==newData1$OutlierNumber,
+#       "Influential",
+#       "Not"),
+#     Model = 1)
+# 
+# fReg_dffits2 <- ffscbExtra::fRegress_concurrent(
+#   y_mat = newData2$Ydata, 
+#   x_array = newData2$Xdata
+# )$dffits_mat
+# dffits_gg_plot_data2 <- fReg_dffits2 %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "Y(t)") %>%
+#   dplyr::mutate(
+#     inf_ob = ifelse(
+#       as.numeric(substring(Observation, 2))==newData2$OutlierNumber,
+#       "Influential",
+#       "Not"),
+#     Model = 2)
+# 
+# fReg_dffits3 <- ffscbExtra::fRegress_concurrent(
+#   y_mat = newData3$Ydata, 
+#   x_array = newData3$Xdata
+# )$dffits_mat
+# 
+# dffits_gg_plot_data3 <- fReg_dffits3 %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "Y(t)") %>%
+#   dplyr::mutate(
+#     inf_ob = ifelse(
+#       as.numeric(substring(Observation, 2))==newData3$OutlierNumber,
+#       "Influential",
+#       "Not"),
+#     Model = 3)
+# 
+# dffits_gg_plot_data <- dffits_gg_plot_data1 %>%
+#   dplyr::bind_rows(dffits_gg_plot_data2) %>%
+#   dplyr::bind_rows(dffits_gg_plot_data3) %>%
+#   dplyr::mutate(inf_ob = factor(inf_ob,
+#                                 levels = c("Not", "Influential")))
+# 
+# # Plot
+# dffits_data_plot <- ggplot() +
+#   geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
+#             color = "lightgray", alpha = 0.5,
+#             data = dffits_gg_plot_data) +
+#   geom_line(aes(x = sp, y = `Y(t)`, group = Observation),
+#             color = "#E69F00", size = 1.1,
+#             linetype = "longdash",
+#             data = dffits_gg_plot_data %>%
+#               filter(inf_ob == "Influential")) +
+#   facet_grid(cols = vars(Model),
+#              labeller = label_bquote(cols = "Model "*.(Model))) +
+#   scale_x_continuous(expand = c(0,0)) +
+#   theme_bw() +
+#   theme(text = element_text(size = 16),
+#         plot.margin = unit(c(.5, 1, 1, 1), "cm"),
+#         panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank()) +
+#   labs(x = "Sampling Point (t)", 
+#        y = "DFFITS(t)")
+# 
+# library(cowplot)
+# plot_grid(y_data_plot, dffits_data_plot,
+#           align = "v", nrow = 2, labels = c("(a)", "(b)"))
+# 
+# # Plot of X(t) sample
+# x_gg_plot_data <- newData1$Xdata %>%
+#   as.data.frame() %>%
+#   dplyr::mutate(sp = 1:1000) %>%
+#   tidyr::pivot_longer(-sp,
+#                       names_to = "Observation",
+#                       values_to = "X(t)")
+# 
+# ggplot(data = x_gg_plot_data) +
+#   geom_line(aes(x = sp, y = `X(t)`, group = Observation)) +
+#   scale_x_continuous(expand = c(0,0)) +
+#   theme_bw() +
+#   theme(text = element_text(size = 16),
+#         plot.margin = unit(c(.5, 1, 1, 1), "cm"),
+#         panel.grid.major = element_blank(),
+#         panel.grid.minor = element_blank()) +
+#   labs(x = "Sampling Point (t)")
