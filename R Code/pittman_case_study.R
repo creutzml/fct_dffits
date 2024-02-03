@@ -17,29 +17,20 @@ library(ggplot2)
 library(fdaconcur)
 library(readr)
 
-# Set working directory
-main_dir <- file.path("/Users/creutzml/Library/Mobile Documents",
-                      "com~apple~CloudDocs/Documents/Dissertation",
-                      "functional_data_analysis")
+# Install ffscbExtra
+devtools::install_github("creutzml/ffscbExtra")
+library(ffscbExtra)
 
-# Helper functions
-source(file.path(main_dir, 
-                 "code/fast_and_fair/make_regression_band_mc.R"))
-source(file.path(main_dir, 
-                 "code/fast_and_fair/make_band_mc.R"))
-source(file.path(main_dir, 
-                 "code/fast_and_fair/confidence_band_mc.R"))
-source(file.path(main_dir, 
-                 "code/fast_and_fair",
-                 "make_concurrent_regression_band_mc_10_12_23.R"))
-source(file.path(main_dir, 
-                 "code/functional_dffits/fRegress_concurrent.R"))
-source(file.path(main_dir, 
-                 "code/functional_dffits/pittman_data_gen.R"))
+# Directories
+functions_path <- file.path(here::here(), "R Code")
+data_path <- file.path(here::here(), "Data")
+
+
+# Load in Pittman's functions
+source(file.path(functions_path, "pittman_data_gen_nonsmooth.R"))
 
 # Load the data in
-y_floods <- read_csv(file = file.path(main_dir, 
-                                      "data/River_Floods/data", 
+y_floods <- read_csv(file = file.path(data_path, 
                                       "FinalYtL1star.csv")) %>%
   dplyr::select(-`...1`) %>%
   dplyr::rename("August_1995" = V1, 
@@ -55,8 +46,7 @@ y_floods <- read_csv(file = file.path(main_dir,
 
 y_floods_mat <- as.matrix(y_floods)
 
-x_floods <- read_csv(file = file.path(main_dir, 
-                                      "data/River_Floods/data", 
+x_floods <- read_csv(file = file.path(data_path, 
                                       "FinalXtL1star.csv")) %>%
   dplyr::rename("August_1995" = V1, 
                 "February_1998" = V2, 
@@ -72,8 +62,8 @@ x_floods <- read_csv(file = file.path(main_dir,
 x_floods_mat <- as.matrix(x_floods)
 
 Oct15CongHt <- read_table(file = file.path(
-  main_dir, 
-  "data/River_Floods/data/Oct15CongHt.txt"
+  data_path, 
+  "Oct15CongHt.txt"
 ))
 
 # Plot of realigned river heights
@@ -412,15 +402,13 @@ names(x_floods)[pitt_inf]
 ## Creutzinger analysis
 #####################################################################
 # Run the concurrent regression with X and Y from the floods data
-flood_regress <- fRegress_concurrent(y_mat = y_floods_mat, 
-                                     x_array = x_floods_mat)
+flood_regress <- ffscbExtra::fRegress_concurrent(
+  y_mat = y_floods_mat, 
+  x_array = x_floods_mat
+)
 
 # multivariate Student's t distribution quantiles
-load(file = paste0("/Users/creutzml/Library/Mobile Documents",
-                   "/com~apple~CloudDocs/Documents/Dissertation",
-                   "/functional_data_analysis/sim_results",
-                   "/functional_dffits",
-                   "/mvt_cutoffs_sim_12_19_23.RData"))
+load(file = file.path(data_path, "mvt_cutoffs_sim.RData"))
 
 # Plot of the dffits
 # matplot(flood_regress$dffits_mat, type = "l", 
@@ -436,8 +424,8 @@ creutz_dffits_gg <- flood_regress$dffits_mat %>%
 ggplot() + 
   geom_line(aes(x = Index, y = river_height, color = Year), 
             data = creutz_dffits_gg) +
-  geom_hline(yintercept = c(mvt_cutoffs$t_cuts[4], 
-                            - mvt_cutoffs$t_cuts[4]), 
+  geom_hline(yintercept = c(mvt_cutoffs$t_cuts[34], 
+                            - mvt_cutoffs$t_cuts[34]), 
              linetype = "dashed") +
   scale_x_continuous(expand = c(0,0)) +
   theme_bw(base_size = 18) +

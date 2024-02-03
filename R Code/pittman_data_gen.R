@@ -6,6 +6,9 @@
 library(fda)
 library(MASS)
 library(corpcor) 
+library(tidyverse)
+library(ggplot2)
+library(ffscbExtra)
 
 sin_a=function()sample(c(-3,-2,-1,0,1,2,3),1)
 sin_k=function()sample(c(-300,-200,-100,100,200,300),1)
@@ -604,8 +607,10 @@ y_data_plot <- ggplot() +
 
 
 ## Next, plot the dffits from those same models
-fReg_dffits1 <- fRegress_concurrent(y_mat = newData1$Ydata, 
-                                    x_array = newData1$Xdata)$dffits_mat
+fReg_dffits1 <- ffscbExtra::fRegress_concurrent(
+  y_mat = newData1$Ydata, 
+  x_array = newData1$Xdata
+)$dffits_mat
 
 dffits_gg_plot_data1 <- fReg_dffits1 %>%
   as.data.frame() %>%
@@ -620,9 +625,10 @@ dffits_gg_plot_data1 <- fReg_dffits1 %>%
       "Not"),
     Model = 1)
 
-fReg_dffits2 <- fRegress_concurrent(y_mat = newData2$Ydata, 
-                                    x_array = newData2$Xdata)$dffits_mat
-
+fReg_dffits2 <- ffscbExtra::fRegress_concurrent(
+  y_mat = newData2$Ydata, 
+  x_array = newData2$Xdata
+)$dffits_mat
 dffits_gg_plot_data2 <- fReg_dffits2 %>%
   as.data.frame() %>%
   dplyr::mutate(sp = 1:1000) %>%
@@ -636,8 +642,10 @@ dffits_gg_plot_data2 <- fReg_dffits2 %>%
       "Not"),
     Model = 2)
 
-fReg_dffits3 <- fRegress_concurrent(y_mat = newData3$Ydata, 
-                                    x_array = newData3$Xdata)$dffits_mat
+fReg_dffits3 <- ffscbExtra::fRegress_concurrent(
+  y_mat = newData3$Ydata, 
+  x_array = newData3$Xdata
+)$dffits_mat
 
 dffits_gg_plot_data3 <- fReg_dffits3 %>%
   as.data.frame() %>%
@@ -683,20 +691,20 @@ library(cowplot)
 plot_grid(y_data_plot, dffits_data_plot,
           align = "v", nrow = 2, labels = c("(a)", "(b)"))
 
-# # Plot of X(t) sample
-# x_gg_plot_data <- test_data1$Xdata %>%
-#   as.data.frame() %>%
-#   dplyr::mutate(sp = 1:1000) %>%
-#   tidyr::pivot_longer(-sp, 
-#                       names_to = "Observation", 
-#                       values_to = "X(t)")
-# 
-# ggplot(data = x_gg_plot_data) +
-#   geom_line(aes(x = sp, y = `X(t)`, group = Observation)) +
-#   scale_x_continuous(expand = c(0,0)) +
-#   theme_bw() + 
-#   theme(text = element_text(size = 16), 
-#         plot.margin = unit(c(.5, 1, 1, 1), "cm"),
-#         panel.grid.major = element_blank(),
-#         panel.grid.minor = element_blank()) +
-#   labs(x = "Sampling Point (t)")
+# Plot of X(t) sample
+x_gg_plot_data <- newData1$Xdata %>%
+  as.data.frame() %>%
+  dplyr::mutate(sp = 1:1000) %>%
+  tidyr::pivot_longer(-sp,
+                      names_to = "Observation",
+                      values_to = "X(t)")
+
+ggplot(data = x_gg_plot_data) +
+  geom_line(aes(x = sp, y = `X(t)`, group = Observation)) +
+  scale_x_continuous(expand = c(0,0)) +
+  theme_bw() +
+  theme(text = element_text(size = 16),
+        plot.margin = unit(c(.5, 1, 1, 1), "cm"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()) +
+  labs(x = "Sampling Point (t)")

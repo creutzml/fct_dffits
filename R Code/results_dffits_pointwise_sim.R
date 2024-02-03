@@ -34,8 +34,7 @@ data_path <- file.path(here::here(), "Data")
 
 
 # Source Pittman's functions
-source(file.path(main_dir, 
-                 "functional_dffits/pittman_data_gen.R"))
+source(file.path(functions_path, "pittman_data_gen_nonsmooth.R"))
 #####################################################################
 
 

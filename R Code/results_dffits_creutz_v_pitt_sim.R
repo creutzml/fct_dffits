@@ -306,10 +306,10 @@ sim_results_sum_n %>%
                  color = method, 
                  shape = method), 
             size = 5) +
-  ggrepel::geom_label_repel(aes(x = n, 
-                                y = avg_specificity, 
-                                label = round(avg_specificity, 3)), 
-                            size = 7) +
+  # ggrepel::geom_label_repel(aes(x = n, 
+  #                               y = avg_specificity, 
+  #                               label = round(avg_specificity, 3)), 
+  #                           size = 7) +
   facet_grid(cols = vars(`# Influential`), rows = vars(lam), 
              labeller = label_bquote(
                rows = lambda*" = "*.(lam), 
@@ -328,8 +328,10 @@ sim_results_sum_n %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
         panel.spacing = unit(1.5, "lines"), 
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) 
+        # axis.text.y = element_blank(),
+        # axis.ticks.y = element_blank(), 
+        legend.position = "bottom", 
+        strip.text = element_text(size = 16)) 
 
 # Average Sensitivity
 sim_results_sum_n %>%
@@ -348,10 +350,10 @@ sim_results_sum_n %>%
                  color = method, 
                  shape = method), 
              size = 5) +
-  ggrepel::geom_label_repel(aes(x = n, 
-                                y = avg_sensitivity, 
-                                label = round(avg_sensitivity, 3)), 
-                            size = 7) +
+  # ggrepel::geom_label_repel(aes(x = n, 
+  #                               y = avg_sensitivity, 
+  #                               label = round(avg_sensitivity, 3)), 
+  #                           size = 7) +
   facet_grid(cols = vars(`# Influential`), rows = vars(lam), 
              labeller = label_bquote(
                rows = lambda*" = "*.(lam), 
@@ -369,8 +371,10 @@ sim_results_sum_n %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
         panel.spacing = unit(1.5, "lines"), 
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
+        # axis.text.y = element_blank(),
+        # axis.ticks.y = element_blank(), 
+        legend.position = "bottom", 
+        strip.text = element_text(size = 16)) +
   guides(color = guide_legend(override.aes = list(size=5)))
 
 # Average MCC
@@ -390,10 +394,10 @@ sim_results_sum_n %>%
                  color = method, 
                  shape = method), 
              size = 5) +
-  ggrepel::geom_label_repel(aes(x = n, 
-                                y = avg_mcc, 
-                                label = round(avg_mcc, 3)), 
-                            size = 7) +
+  # ggrepel::geom_label_repel(aes(x = n, 
+  #                               y = avg_mcc, 
+  #                               label = round(avg_mcc, 3)), 
+  #                           size = 7) +
   facet_grid(cols = vars(`# Influential`), rows = vars(lam), 
              labeller = label_bquote(
                rows = lambda*" = "*.(lam), 
@@ -411,8 +415,10 @@ sim_results_sum_n %>%
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(), 
         panel.spacing = unit(1.5, "lines"), 
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank()) +
+        # axis.text.y = element_blank(),
+        # axis.ticks.y = element_blank(), 
+        legend.position = "bottom", 
+        strip.text = element_text(size = 16)) +
   guides(color = guide_legend(override.aes = list(size=5)))
 #####################################################################
 
@@ -479,10 +485,10 @@ sim_results_sum_T %>%
                  color = method, 
                  shape = method), 
              size = 5) +
-  ggrepel::geom_label_repel(aes(x = n_sp, 
-                                y = avg_specificity, 
-                                label = round(avg_specificity, 3)), 
-                            size = 7) +
+  # ggrepel::geom_label_repel(aes(x = n_sp, 
+  #                               y = avg_specificity, 
+  #                               label = round(avg_specificity, 3)), 
+  #                           size = 7) +
   facet_grid(cols = vars(`# Influential`), rows = vars(lam), 
              labeller = label_bquote(
                rows = lambda*" = "*.(lam), 
@@ -501,8 +507,10 @@ sim_results_sum_T %>%
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(), 
     panel.spacing = unit(1.5, "lines"), 
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()) 
+    # axis.text.y = element_blank(),
+    # axis.ticks.y = element_blank(), 
+    legend.position = "bottom", 
+    strip.text = element_text(size = 16)) 
 
 # Average Sensitivity
 sim_results_sum_T %>%
@@ -521,10 +529,10 @@ sim_results_sum_T %>%
                  color = method, 
                  shape = method), 
              size = 5) +
-  ggrepel::geom_label_repel(aes(x = n_sp, 
-                                y = avg_sensitivity, 
-                                label = round(avg_sensitivity, 3)), 
-                            size = 7) +
+  # ggrepel::geom_label_repel(aes(x = n_sp, 
+  #                               y = avg_sensitivity, 
+  #                               label = round(avg_sensitivity, 3)), 
+  #                           size = 7) +
   facet_grid(cols = vars(`# Influential`), rows = vars(lam), 
              labeller = label_bquote(
                rows = lambda*" = "*.(lam), 
@@ -543,8 +551,10 @@ sim_results_sum_T %>%
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(), 
     panel.spacing = unit(1.5, "lines"), 
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()) 
+    # axis.text.y = element_blank(),
+    # axis.ticks.y = element_blank(), 
+    legend.position = "bottom", 
+    strip.text = element_text(size = 16)) 
 
 # Average MCC
 sim_results_sum_T %>%
@@ -563,11 +573,11 @@ sim_results_sum_T %>%
                  color = method, 
                  shape = method), 
              size = 5) +
-  ggrepel::geom_label_repel(aes(x = n_sp, 
-                                y = avg_mcc, 
-                                label = round(avg_mcc, 3), 
-                                color = method),
-                            size = 7) +
+  # ggrepel::geom_label_repel(aes(x = n_sp, 
+  #                               y = avg_mcc, 
+  #                               label = round(avg_mcc, 3), 
+  #                               color = method),
+  #                           size = 7) +
   facet_grid(cols = vars(`# Influential`), rows = vars(lam), 
              labeller = label_bquote(
                rows = lambda*" = "*.(lam), 
@@ -586,6 +596,8 @@ sim_results_sum_T %>%
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(), 
     panel.spacing = unit(1.5, "lines"), 
-    axis.text.y = element_blank(),
-    axis.ticks.y = element_blank()) 
+    # axis.text.y = element_blank(),
+    # axis.ticks.y = element_blank(), 
+    legend.position = "bottom", 
+    strip.text = element_text(size = 16)) 
 #####################################################################
