@@ -76,10 +76,12 @@ Oct15CongHt <- read_table(file = file.path(
 ## Ggplot2 plot instead of matplot
 x_floods_gg <- x_floods %>%
   dplyr::mutate(Idx = 1:2000) %>%
-  pivot_longer(-Idx, names_to = "Year", values_to = "river_height")
+  pivot_longer(-Idx, names_to = "Year", values_to = "river_height") %>%
+  mutate(river = "Congaree River")
 
 ggplot() + 
-  geom_line(aes(x = Idx, y = river_height, color = Year), 
+  geom_line(aes(x = Idx, y = river_height, group = Year), 
+            alpha = 0.3,
             data = x_floods_gg) +
   scale_x_continuous(expand = c(0,0)) +
   theme_bw(base_size = 18) +
@@ -91,6 +93,30 @@ ggplot() +
        y = "River Height (ft)", 
        color = "Year") +
   guides(color = "none")
+
+y_floods_gg <- y_floods %>%
+  dplyr::mutate(Idx = 1:2000) %>%
+  pivot_longer(-Idx, names_to = "Year", values_to = "river_height") %>%
+  mutate(river = "Cedar Creek")
+
+floods_gg <- bind_rows(x_floods_gg, y_floods_gg)
+
+ggplot() + 
+  geom_line(aes(x = Idx, 
+                y = river_height, 
+                group = interaction(Year, river),
+                linetype = river),
+            alpha = 0.5,
+            data = floods_gg) +
+  scale_x_continuous(expand = c(0,0)) +
+  theme_bw(base_size = 18) +
+  theme(plot.margin = unit(c(.5, 1, 1, 1), "cm"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(), 
+        legend.position = "bottom") +
+  labs(x = "Index", 
+       y = "River Height (ft)", 
+       linetype = "River") 
 #####################################################################
 
 
